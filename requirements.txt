@@ -1,0 +1,13 @@
+asgiref==3.7.2
+certifi==2023.7.22
+charset-normalizer==3.3.0
+Django==4.2.6
+dnspython==2.4.2
+docopt==0.6.2
+idna==3.4
+pipreqs==0.4.13
+pymongo==4.5.0
+requests==2.31.0
+sqlparse==0.4.4
+urllib3==2.0.6
+yarg==0.1.9
