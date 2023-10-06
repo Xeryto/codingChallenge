@@ -1,3 +1,6 @@
+{% extends 'base.html' %}
+
+{% block content %}
 {% if collections_list %}
     <ul>
     {% for collection in collections_list %}
@@ -7,3 +10,4 @@
 {% else %}
     <p>No collections available</p>
 {% endif %}
+{% endblock %}
