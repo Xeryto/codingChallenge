@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+from django.shortcuts import render
 from pymongo import MongoClient
 from pymongo.server_api import ServerApi
 import certifi
@@ -10,6 +11,7 @@ def index(request):
     # Create a connection using MongoClient. You can import MongoClient or use pymongo.MongoClient
     client = MongoClient(CONNECTION_STRING, tlsCAFile=certifi.where())
 
-    print(client['sample_restaurants'].list_collection_names())
+    for collection in client['sample_restaurants'].list_collection_names():
+        print(collection)
 
-    return HttpResponse("hello")
+    return render(request, "restaurants/index.html", {"collections_list": client['sample_restaurants'].list_collection_names()})

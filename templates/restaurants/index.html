@@ -1,0 +1,9 @@
+{% if collections_list %}
+    <ul>
+    {% for collection in collections_list %}
+        <li>{{ collection }}</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No collections available</p>
+{% endif %}
