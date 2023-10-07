@@ -16,21 +16,23 @@ def return_client():
     client = MongoClient(CONNECTION_STRING, tlsCAFile=certifi.where())
 
     neighborhoods = client['sample_restaurants'].get_collection('neighborhoods')
-    neighborhoods.update_many({"has_restaurants": {"$exists": False}}, {"$set": {"has_restaurants": 'false'}})
-    restaurants = list(client['sample_restaurants'].get_collection('restaurants').find())
+    neighborhoods.update_many({'has_restaurants': {'$exists' : 'false'}}, {"$set": {"has_restaurants": 'false'}})
+    neighborhoods.update_many({}, {"$set": {"has_restaurants": 'false'}})
+    restaurants = list(client['sample_restaurants'].get_collection('restaurants').find().limit(100))
     points = []
     for restaurant in restaurants:
         if restaurant['address']['coord'] != []:
             points+=[Point(restaurant['address']['coord'])]
 
     for neighborhood in list(neighborhoods.find()):
-        print(len(neighborhood['geometry']['coordinates'][0]))
         coords = neighborhood['geometry']['coordinates'][0]
         if (len(coords) == 1):
             coords = coords[0]
         polygon = Polygon(coords)
         for point in points:
             if polygon.contains(point):
+                if neighborhood['_id'] == ObjectId('55cb9c666c522cafdb053a1a'):
+                    print(point)
                 neighborhoods.update_one({'_id': neighborhood['_id']}, {'$set': {'has_restaurants': 'true'}})
                 break
     return client
@@ -44,6 +46,7 @@ def index(request):
         neighborhood = request.GET['address_field']
         cuisine = request.GET['cuisine_field']
         borough = request.GET['boroughs_field']
+        grade = request.GET['grade_field']
 
         if cuisine != "1" or borough != "1":
             if borough != "1" and cuisine != "1":
@@ -55,18 +58,40 @@ def index(request):
                 restaurants = client['sample_restaurants'].get_collection('restaurants').find(
                     {'borough': borough}).limit(100)
 
-        if neighborhood != "1":
-            neighborhood = ObjectId(neighborhood)
-            coords = client['sample_restaurants'].get_collection("neighborhoods").find_one({'_id': neighborhood})['geometry']['coordinates'][0]
-            if (len(coords) == 1):
-                coords = coords[0]
-            filtered_restaurants = []
-            for restaurant in list(restaurants):
-                point = Point(restaurant['address']['coord'])
-                polygon = Polygon(coords)
-                if polygon.contains(point):
-                    filtered_restaurants+=[restaurant]
-            restaurants = filtered_restaurants
+        if neighborhood != "1" or grade != "1":
+            if neighborhood != "1":
+                neighborhood = ObjectId(neighborhood)
+                coords = client['sample_restaurants'].get_collection("neighborhoods").find_one({'_id': neighborhood})[
+                    'geometry']['coordinates'][0]
+                if (len(coords) == 1):
+                    coords = coords[0]
+                filtered_restaurants = []
+                for restaurant in list(restaurants):
+                    point = Point(restaurant['address']['coord'])
+                    polygon = Polygon(coords)
+                    if polygon.contains(point):
+                        if grade != "1":
+                            restaurant['grade'] = list(filter(lambda x: x['date'], list(restaurant['grades'])))[0]['grade']
+                        filtered_restaurants += [restaurant]
+
+                restaurants = filtered_restaurants
+                if grade != "1":
+                    if grade == "2":
+                        restaurants = list(filter(lambda x: x['grade'] == "A", restaurants))
+                    elif grade == "3":
+                        restaurants = list(filter(lambda x: x['grade'] in ["A", "B"], restaurants))
+                    else:
+                        restaurants = list(filter(lambda x: x['grade'] in ["A", "B", "C"], restaurants))
+            else:
+                restaurants = list(restaurants)
+                for restaurant in restaurants:
+                    restaurant['grade'] = list(filter(lambda x: x['date'], list(restaurant['grades'])))[0]['grade']
+                if grade == "2":
+                    restaurants = list(filter(lambda x: x['grade'] == "A", restaurants))
+                elif grade == "3":
+                    restaurants = list(filter(lambda x: x['grade'] in ["A", "B"], restaurants))
+                else:
+                    restaurants = list(filter(lambda x: x['grade'] in ["A", "B", "C"], restaurants))
         else: restaurants = list(restaurants)
     else:
         restaurants = list(restaurants)

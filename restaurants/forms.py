@@ -27,14 +27,22 @@ for restaurant in restaurants:
             cuisine = (*cuisine, ((restaurant['cuisine']), (restaurant['cuisine'])))
             cus[restaurant['cuisine']] = 1
 
-neighborhoods = client['sample_restaurants'].get_collection("neighborhoods").find({'has_restaurants': 'true'})
+neighborhoods = list(client['sample_restaurants'].get_collection("neighborhoods").find({'has_restaurants': 'true'}))
 nghbrhds = ((1, "All"),)
 for neighborhood in list(neighborhoods):
         nghbrhds = (*nghbrhds, ((neighborhood['_id']), (neighborhood['name'])))
+
+grade_options = (
+    (1, "All"),
+    (2, "A"),
+    (3, "B or better"),
+    (4, "Graded")
+)
 
 # creating a form
 class FilterForm(forms.Form):
         address_field = forms.ChoiceField(choices=nghbrhds)
         boroughs_field = forms.ChoiceField(choices=boroughs)
         cuisine_field = forms.ChoiceField(choices=cuisine)
+        grade_field = forms.ChoiceField(choices=grade_options)
 
