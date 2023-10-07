@@ -1,13 +1,58 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% if collections_list %}
-    <ul>
-    {% for collection in collections_list %}
-        <li>{{ collection }}</li>
+    <form method = "GET">
+    <div class="container">
+        <div class="row">
+                <div class="col-md-2">
+                    <p>Name</p>
+                </div>
+                <div class="col-md-2">
+                    <p>Address</p>
+                    <p class="form-field">{{ form.address_field }}</p>
+                </div>
+                <div class="col-md-2">
+                    <p>Borough</p>
+                    <p class="form-field">{{ form.boroughs_field }}</p>
+                </div>
+                <div class="col-md-2">
+                    <p>Cuisine</p>
+                    <p class="form-field">{{ form.cuisine_field }}</p>
+                </div>
+                <div class="col-md-2">
+                    <p>Rating</p>
+                </div>
+                <div class="col-md-2">
+                    <input type = "submit" value = "Submit">
+                </div>
+        </div>
+    <hr>
+    {% if restaurants %}
+    {% for restaurant in restaurants %}
+        <div class="row">
+            <div class="col">
+                <p><a href="details.html">{{ restaurant.name }}</a></p>
+            </div>
+            <div class="col">
+                <p>{{ restaurant.address }}</p>
+            </div>
+            <div class="col">
+                <p>{{ restaurant.borough }}</p>
+            </div>
+            <div class="col">
+                <p>{{ restaurant.cuisine }}</p>
+            </div>
+            <div class="col">
+                <p><a href="grades.html">{{ restaurant.grade }}</a></p>
+            </div>
+            <div class="col">
+
+            </div>
+        </div>
     {% endfor %}
-    </ul>
-{% else %}
-    <p>No collections available</p>
-{% endif %}
+    {% else %}
+        <p>No restaurants available</p>
+    {% endif %}
+    </div>
+    </form>
 {% endblock %}
