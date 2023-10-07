@@ -48,7 +48,7 @@
                 <p><a href="{% url 'grades' restaurant.restaurant_id %}">{{ restaurant.grade }}</a></p>
             </div>
             <div class="col">
-                <p>Edit</p>
+                <p><a href="{% url 'update_restaurant' restaurant.restaurant_id %}">Edit</a></p>
                 <p>Delete</p>
             </div>
         </div>

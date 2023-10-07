@@ -56,4 +56,5 @@ class CreateForm(forms.Form):
     coord1 = forms.FloatField()
     coord2 = forms.FloatField()
     name = forms.CharField()
+    restaurant_id = forms.CharField(widget=forms.HiddenInput)
 
