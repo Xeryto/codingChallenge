@@ -2,6 +2,10 @@ p {
  text-align: center;
 }
 
+h {
+ text-align: center;
+}
+
 .form-field select {
  max-width: 100%;
 }

@@ -144,8 +144,12 @@ def details(request, restaurant_id):
 
     return render(request, 'restaurants/details.html', context)
 
-def grades(request, id):
-    print("yay")
+def grades(request, restaurant_id):
+    client = return_client()
+    restaurant = client['sample_restaurants'].get_collection('restaurants').find_one(
+        {'restaurant_id': str(restaurant_id)})
+    restaurant['grades'] = list(filter(lambda x: x['date'], list(restaurant['grades'])))
 
-def add_grade(request, id):
-    print("yay")
+    context = {}
+    context['restaurant'] = restaurant
+    return render(request, 'restaurants/grades.html', context)
