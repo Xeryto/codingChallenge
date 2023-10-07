@@ -47,10 +47,24 @@ def index(request):
         cuisine = request.GET['cuisine_field']
         borough = request.GET['boroughs_field']
         grade = request.GET['grade_field']
+        name = request.GET['name']
 
-        if cuisine != "1" or borough != "1":
-            if borough != "1" and cuisine != "1":
-                restaurants = client['sample_restaurants'].get_collection('restaurants').find({'cuisine': cuisine, 'borough': borough}).limit(100)
+        if cuisine != "1" or borough != "1" or name != None:
+            if borough != "1" and cuisine != "1" and name != None:
+                restaurants = client['sample_restaurants'].get_collection('restaurants').find({
+                    'cuisine': cuisine, "borough": borough, 'name': {'$regex': name, '$options': 'i'}}).limit(100)
+            elif borough != "1" and name != None:
+                restaurants = client['sample_restaurants'].get_collection('restaurants').find(
+                    {'name': {'$regex': name, '$options': 'i'}, 'borough': borough}).limit(100)
+            elif cuisine != "1" and name != None:
+                restaurants = client['sample_restaurants'].get_collection('restaurants').find(
+                    {'cuisine': cuisine, 'name': {'$regex': name, '$options': 'i'}}).limit(100)
+            elif cuisine != "1" and borough != "1":
+                restaurants = client['sample_restaurants'].get_collection('restaurants').find({
+                    'cuisine': cuisine, "borough": borough}).limit(100)
+            elif name != None:
+                restaurants = client['sample_restaurants'].get_collection('restaurants').find(
+                    {'name': {'$regex': name, '$options': 'i'}}).limit(100)
             elif cuisine != "1":
                 restaurants = client['sample_restaurants'].get_collection('restaurants').find(
                     {'cuisine': cuisine}).limit(100)

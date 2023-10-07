@@ -45,4 +45,5 @@ class FilterForm(forms.Form):
         boroughs_field = forms.ChoiceField(choices=boroughs)
         cuisine_field = forms.ChoiceField(choices=cuisine)
         grade_field = forms.ChoiceField(choices=grade_options)
+        name = forms.CharField(label="Search by the name of restaurant", required=False)
 
