@@ -47,3 +47,13 @@ class FilterForm(forms.Form):
         grade_field = forms.ChoiceField(choices=grade_options)
         name = forms.CharField(label="Search by the name of restaurant", required=False)
 
+class CreateForm(forms.Form):
+    building = forms.IntegerField()
+    street = forms.CharField()
+    zipcode = forms.IntegerField()
+    borough = forms.ChoiceField(choices=boroughs)
+    cuisine = forms.ChoiceField(choices=cuisine)
+    coord1 = forms.FloatField()
+    coord2 = forms.FloatField()
+    name = forms.CharField()
+

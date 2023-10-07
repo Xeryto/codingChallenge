@@ -16,6 +16,7 @@
                 <p>Score</p>
             </div>
         </div>
+        {% if restaurant.grades %}
         {% for grade in restaurant.grades %}
             <div class="row">
                 <div class="col">
@@ -29,5 +30,12 @@
                 </div>
             </div>
         {% endfor %}
+            {% else %}
+            <div class="row">
+                <div class="col">
+                    <p>No inspection grade history yet</p>
+                </div>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}

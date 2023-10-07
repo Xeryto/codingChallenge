@@ -1,3 +1,6 @@
+import datetime
+
+import pymongo
 from django.http import HttpResponse
 from django.shortcuts import render
 from pymongo import MongoClient
@@ -153,3 +156,31 @@ def grades(request, restaurant_id):
     context = {}
     context['restaurant'] = restaurant
     return render(request, 'restaurants/grades.html', context)
+
+def add_restaurant(request):
+    if request.POST:
+        client = return_client()
+        restaurants = client['sample_restaurants'].get_collection('restaurants')
+        restaurant = {
+            "address": {
+                'building': request.POST['building'],
+                'street': request.POST['street'],
+                'zipcode': request.POST['zipcode'],
+                'coord': [request.POST['coord1'], request.POST['coord2']]
+            },
+            "name": request.POST['name'],
+            "borough": request.POST['borough'],
+            'cuisine': request.POST['cuisine'],
+            'grades': [{
+                "date": datetime.datetime.now(tz=datetime.timezone.utc),
+                'grade': 'Not yet graded',
+                'score': 0
+            }],
+            'restaurant_id': str(int(list(restaurants.find().sort('restaurant_id',pymongo.DESCENDING))[0]['restaurant_id'])+1)
+        }
+        restaurants.insert_one(restaurant)
+
+    context = {}
+    context['form'] = CreateForm()
+
+    return render(request, 'restaurants/add_restaurant.html', context)
