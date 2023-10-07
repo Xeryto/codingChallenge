@@ -33,10 +33,10 @@
     {% for restaurant in restaurants %}
         <div class="row">
             <div class="col">
-                <p><a href="details.html">{{ restaurant.name }}</a></p>
+                <p><a href="{% url 'details' restaurant.restaurant_id %}">{{ restaurant.name }}</a></p>
             </div>
             <div class="col">
-                <p>{{ restaurant.address }}</p>
+                <p><a href="https://www.google.com/maps/place/{{ restaurant.address.building }}+{{ restaurant.address.street }}+, {{ restaurant.borough }}">{{ restaurant.string_address }}</a></p>
             </div>
             <div class="col">
                 <p>{{ restaurant.borough }}</p>
@@ -45,10 +45,11 @@
                 <p>{{ restaurant.cuisine }}</p>
             </div>
             <div class="col">
-                <p><a href="grades.html">{{ restaurant.grade }}</a></p>
+                <p><a href="{% url 'grades' restaurant.restaurant_id %}">{{ restaurant.grade }}</a></p>
             </div>
             <div class="col">
-
+                <p>Edit</p>
+                <p>Delete</p>
             </div>
         </div>
     {% endfor %}

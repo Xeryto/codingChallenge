@@ -31,8 +31,6 @@ def return_client():
         polygon = Polygon(coords)
         for point in points:
             if polygon.contains(point):
-                if neighborhood['_id'] == ObjectId('55cb9c666c522cafdb053a1a'):
-                    print(point)
                 neighborhoods.update_one({'_id': neighborhood['_id']}, {'$set': {'has_restaurants': 'true'}})
                 break
     return client
@@ -112,7 +110,7 @@ def index(request):
 
     for restaurant in restaurants:
         restaurant['grade'] = list(filter(lambda x: x['date'], list(restaurant['grades'])))[0]['grade']
-        restaurant['address'] = restaurant['address']['building']+' '+restaurant['address']['street']+", "+restaurant['address']['zipcode']
+        restaurant['string_address'] = restaurant['address']['building']+' '+restaurant['address']['street']+", "+restaurant['address']['zipcode']
 
     context = {}
     context['restaurants'] = restaurants
@@ -121,6 +119,30 @@ def index(request):
 
 
     return render(request, "restaurants/index.html", context)
+
+def details(request, restaurant_id):
+    client = return_client()
+    restaurant = client['sample_restaurants'].get_collection('restaurants').find_one({'restaurant_id': str(restaurant_id)})
+    point = Point(restaurant['address']['coord'])
+    restaurant['grade'] = list(filter(lambda x: x['date'], list(restaurant['grades'])))[0]['grade']
+    restaurant['string_address'] = restaurant['address']['building'] + ' ' + restaurant['address']['street'] + ", " + \
+                            restaurant['address']['zipcode']
+
+    neighborhoods = client['sample_restaurants'].get_collection('neighborhoods')
+    for neighborhood in list(neighborhoods.find()):
+        coords = neighborhood['geometry']['coordinates'][0]
+        if (len(coords) == 1):
+            coords = coords[0]
+        polygon = Polygon(coords)
+        if polygon.contains(point):
+            restaurant['neighborhood'] = neighborhood['name']
+            break
+
+
+    context = {}
+    context['restaurant'] = restaurant
+
+    return render(request, 'restaurants/details.html', context)
 
 def grades(request, id):
     print("yay")
