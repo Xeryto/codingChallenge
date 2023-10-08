@@ -232,3 +232,33 @@ def update_restaurant(request, restaurant_id):
     context['form'] = CreateForm(request.POST or None, initial=obj)
 
     return render(request, 'restaurants/update_restaurant.html', context)
+
+def delete_restaurant(request, restaurant_id):
+    client = return_client()
+
+    if request.POST:
+        print(request.POST)
+        restaurants = client['sample_restaurants'].get_collection('restaurants')
+        restaurants.delete_one({"restaurant_id": str(restaurant_id)})
+        return HttpResponseRedirect("/")
+
+    restaurant = client['sample_restaurants'].get_collection('restaurants').find_one({'restaurant_id': str(restaurant_id)})
+    point = Point(restaurant['address']['coord'])
+    restaurant['grade'] = list(filter(lambda x: x['date'], list(restaurant['grades'])))[0]['grade']
+    restaurant['string_address'] = restaurant['address']['building'] + ' ' + restaurant['address']['street'] + ", " + \
+                                   restaurant['address']['zipcode']
+
+    neighborhoods = client['sample_restaurants'].get_collection('neighborhoods')
+    for neighborhood in list(neighborhoods.find()):
+        coords = neighborhood['geometry']['coordinates'][0]
+        if (len(coords) == 1):
+            coords = coords[0]
+        polygon = Polygon(coords)
+        if polygon.contains(point):
+            restaurant['neighborhood'] = neighborhood['name']
+            break
+
+    context = {}
+    context['restaurant'] = restaurant
+
+    return render(request, 'restaurants/delete_restaurant.html', context)

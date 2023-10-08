@@ -39,5 +39,15 @@
                 <p><a href="{% url 'grades' restaurant.restaurant_id %}">{{ restaurant.grade }}</a></p>
             </div>
         </div>
+    <div class="row">
+        <div class="col">
+            <h1>Are you sure you want to delete this restaurant from the list?</h1>
+            <form method="post">
+                {% csrf_token %}
+            <p><a href="/">No, return to the list</a></p>
+                <p><input type="submit" value="Yes, delete"></p>
+        </form>
+        </div>
+    </div>
     </div>
 {% endblock %}
