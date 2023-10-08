@@ -198,7 +198,6 @@ def update_restaurant(request, restaurant_id):
     client = return_client()
 
     if request.POST:
-        print(request.POST)
         restaurants = client['sample_restaurants'].get_collection('restaurants')
         restaurant = {
             "address": {
@@ -237,7 +236,6 @@ def delete_restaurant(request, restaurant_id):
     client = return_client()
 
     if request.POST:
-        print(request.POST)
         restaurants = client['sample_restaurants'].get_collection('restaurants')
         restaurants.delete_one({"restaurant_id": str(restaurant_id)})
         return HttpResponseRedirect("/")
